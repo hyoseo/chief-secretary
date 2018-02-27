@@ -1,0 +1,9 @@
+{
+  "name": "chief-secretary",
+  "version": "0.0.0",
+  "description": "chief-secretary",
+  "main": "app.js",
+  "author": {
+    "name": "LHS"
+  }
+}
