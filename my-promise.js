@@ -26,8 +26,42 @@ module.exports.MyPromise = function(fn) {
 
     let _handlers = [];
 
-    this.then = function(onFulfilled, onRejected) {
+    this.done = function (onFulfilled, onRejected) {
         handle({ onFulfilled: onFulfilled, onRejected: onRejected });
+    }
+
+    function resolve(result) {
+        let then = getThen(result);
+        if (then) {
+            // then은 promise의 then함수이다. bind로 result를 this로 한다.
+            doResolve(then.bind(result), resolve, reject)
+            return
+        }
+        fulfill(result);
+    }
+
+    function getThen(value) {
+        let t = typeof value;
+        if (value && (t === 'object' || t === 'function')) {
+            let then = value.then;
+            if (typeof then === 'function') {
+                return then;
+            }
+        }
+        return null;
+    }
+
+    this.then = function (onFulfilled, onRejected) {
+        return new module.exports.MyPromise((resolve, reject) => {
+            this.done((result) => {
+                // onFulfilled가 호출되어서 그 안에서 새로운 Promise가 만들어진것이다.
+                // 그 새로운 Promise가 resolve한 값을 이 Promise가 resolve해야 한다.
+                // 그렇다면 onFulfilled에서 만들어진 Promise의 then에다가 이 프로미스의 fulfill과 reject를 넘겨주면 된다.
+                resolve(onFulfilled(result));
+            }, (error) => {
+                reject(onRejected(reject));
+            });
+        });
     }
 
     function handle(handler) {
@@ -50,5 +84,5 @@ module.exports.MyPromise = function(fn) {
         });
     }
 
-    doResolve(fn, fulfill, reject);
+    doResolve(fn, resolve, reject);
 }

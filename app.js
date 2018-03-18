@@ -1,42 +1,5 @@
 'use strict';
 
-
-const my_promise = require('./my-promise');
-
-function sumUpTo2(number) {
-    return new my_promise.MyPromise((resolve, reject) => {
-        // 단순히 2초 뒤 number까지의 합을 계산하는 함수
-        setTimeout(() => {
-            let sum = 0;
-
-            for (let i = 1; i < number; ++i) {
-                sum += i;
-            }
-
-            resolve(sum);
-        }, 2000);
-    });
-}
-
-sumUpTo2(100).then(sum => { console.log(`sum : ${sum}`) })
-
-return
-
-function sumUpTo(number) {
-    return new Promise((resolve, reject) => {
-        let sum = 0;
-
-        for (let i = 1; i < number; ++i) {
-            sum += i;
-        }
-
-        resolve(sum);
-    });
-}
-
-sumUpTo(100).then(sum => { console.log(`sum : ${sum}`)})
-
-return 
 const { Builder, By, Key, until } = require('selenium-webdriver');
 
 (async function example() {
